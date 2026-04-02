@@ -1,7 +1,17 @@
-export default function RootLayout({ children }) {
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import './globals.css';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
