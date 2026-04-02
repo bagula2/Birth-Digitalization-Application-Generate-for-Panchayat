@@ -1,0 +1,8 @@
+{
+  "buildCommand": "echo build ok",
+  "outputDirectory": ".",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}
