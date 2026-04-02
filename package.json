@@ -1,0 +1,8 @@
+{
+  "name": "app",
+  "private": true,
+  "scripts": {
+    "build": "echo build ok",
+    "start": "echo start"
+  }
+}
