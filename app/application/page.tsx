@@ -7,6 +7,16 @@ export default function Application() {
 
   const [step, setStep] = useState(1);
 
+  const stepLabels = [
+    "Child Details",
+    "Duplicate Check",
+    "Father Details",
+    "Mother Details",
+    "Documents",
+    "Review",
+    "Submit"
+  ];
+
   const [childName, setChildName] = useState("");
   const [motherName, setMotherName] = useState("");
   const [dob, setDob] = useState("");
@@ -26,7 +36,7 @@ export default function Application() {
 
       <p>⏱ Takes 3–5 minutes</p>
 
-      <ProgressBar step={step} />
+      <ProgressBar currentStep={step - 1} totalSteps={7} steps={stepLabels} />
 
       {/* STEP 1 */}
       {step === 1 && (
