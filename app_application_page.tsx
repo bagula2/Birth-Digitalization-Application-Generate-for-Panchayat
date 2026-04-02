@@ -1,40 +1,59 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import ProgressBar from '@/components/ProgressBar';
+import { useState } from "react";
 
-interface PersonalInfo {
-  applicantName: string;
-  applicantDob: string;
-  applicantGender: string;
-  applicantPhone: string;
-  applicantAadhaar: string;
-}
+export default function Application() {
 
-interface ParentsInfo {
-  motherName: string;
-  motherAadhaar: string;
-  fatherName: string;
-  fatherAadhaar: string;
-}
+  const [childName, setChildName] = useState("");
+  const [motherName, setMotherName] = useState("");
+  const [dob, setDob] = useState("");
 
-interface ChildInfo {
-  childName: string;
-  childDob: string;
-  childGender: string;
-}
+  return (
+    <div style={{padding:20}}>
 
-const BirthCertificateForm = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    applicantName: '',
-    applicantDob: '',
-    applicantGender: '',
-    applicantPhone: '',
-    applicantAadhaar: '',
-  });
+      <h2>Birth Application Form</h2>
 
-  const [parentsInfo, setParentsInfo] = useState<ParentsInfo>({
+      <p>⏱ Takes 3–5 minutes</p>
+
+      <br />
+
+      <input
+        placeholder="Child Name"
+        value={childName}
+        onChange={(e)=>setChildName(e.target.value)}
+      />
+
+      <br /><br />
+
+      <input
+        placeholder="Mother Name"
+        value={motherName}
+        onChange={(e)=>setMotherName(e.target.value)}
+      />
+
+      <br /><br />
+
+      <input
+        type="date"
+        value={dob}
+        onChange={(e)=>setDob(e.target.value)}
+      />
+
+      <br /><br />
+
+      <button>
+        Check Duplicate
+      </button>
+
+      <br /><br />
+
+      <button>
+        Submit Application
+      </button>
+
+    </div>
+  );
+}  const [parentsInfo, setParentsInfo] = useState<ParentsInfo>({
     motherName: '',
     motherAadhaar: '',
     fatherName: '',
