@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { listApplications } from "@/lib/firestore";
+import { listApplications, resolveStaffAction } from "@/lib/firestore";
 
 export default function Page() {
   const [id, setId] = useState("");
@@ -9,12 +9,21 @@ export default function Page() {
   const [otp, setOtp] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [apps, setApps] = useState<Array<Record<string, unknown>>>([]);
+  const [message, setMessage] = useState("");
+
+  const load = async () => setApps(await listApplications());
 
   const login = async () => {
     if (id !== "NitishBiswas@zohomail.in") return;
     if (!password || otp !== "8343980898") return;
     setLoggedIn(true);
-    setApps(await listApplications());
+    await load();
+  };
+
+  const decide = async (mobile: string, approve: boolean) => {
+    await resolveStaffAction(mobile, "Admin", approve);
+    setMessage(approve ? "Staff request approved" : "Staff request rejected");
+    await load();
   };
 
   return (
@@ -29,11 +38,23 @@ export default function Page() {
         </div>
       ) : (
         <div className="space-y-2">
-          {apps.map((app, i) => (
-            <pre key={i} className="overflow-auto rounded bg-white p-2 text-xs">{JSON.stringify(app, null, 2)}</pre>
-          ))}
+          {apps.map((app, i) => {
+            const pending = (app.pendingStaffAction as { requestedStatus?: string } | undefined);
+            return (
+              <div key={i} className="rounded bg-white p-2 text-xs">
+                <pre className="overflow-auto">{JSON.stringify(app, null, 2)}</pre>
+                {pending && (
+                  <div className="mt-2 flex gap-2">
+                    <button className="rounded bg-accent px-2 py-1" onClick={() => decide(String(app.mobile), true)}>Approve Staff Edit</button>
+                    <button className="rounded bg-secondary px-2 py-1 text-white" onClick={() => decide(String(app.mobile), false)}>Reject Staff Edit</button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
+          {message && <p className="mt-3 text-sm">{message}</p>}
     </main>
   );
 }

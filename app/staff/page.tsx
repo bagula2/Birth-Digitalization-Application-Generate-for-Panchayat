@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { STAFF_NAMES } from "@/lib/constants";
-import { listApplications, updateStatus } from "@/lib/firestore";
+import { listApplications, requestStatusChange } from "@/lib/firestore";
 
 interface StaffApp {
   id: string;
@@ -11,6 +11,7 @@ interface StaffApp {
   mobile: string;
   status: string;
   documents?: { birthCertificatePath?: string; fatherIdPath?: string };
+  pendingStaffAction?: { requestedBy: string; requestedStatus: string; requestedAt: string };
 }
 
 export default function Page() {
@@ -33,7 +34,8 @@ export default function Page() {
   };
 
   const action = async (mobile: string, next: "Approved" | "Rejected") => {
-    await updateStatus(mobile, next, { staffName: name, action: next === "Approved" ? "Approve" : "Reject", timestamp: new Date().toISOString() });
+    await requestStatusChange(mobile, next, name);
+    setMessage("Staff action submitted for admin approval");
     await load();
   };
 
@@ -59,6 +61,7 @@ export default function Page() {
               <p><b>{app.childName}</b> ({app.mobile})</p>
               <p>Mother: {app.motherName}</p>
               <p>Status: {app.status}</p>
+              {app.pendingStaffAction && <p className="text-xs text-primary">Pending: {app.pendingStaffAction.requestedStatus} by {app.pendingStaffAction.requestedBy}</p>}
               <p className="text-xs">Docs: {app.documents?.birthCertificatePath} | {app.documents?.fatherIdPath}</p>
               <div className="mt-2 flex gap-2">
                 <button className="rounded bg-accent px-3 py-1" onClick={() => action(app.mobile, "Approved")}>Approve</button>

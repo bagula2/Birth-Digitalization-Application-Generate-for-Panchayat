@@ -7,6 +7,13 @@ export interface AuditLogEntry {
   notes?: string;
 }
 
+export interface PendingStaffAction {
+  requestedBy: string;
+  requestedStatus: AppStatus;
+  requestedAt: string;
+  previousStatus: AppStatus;
+}
+
 export interface ApplicationData {
   mobile: string;
   recordAvailable: "Yes" | "No";
@@ -45,6 +52,7 @@ export interface ApplicationData {
   };
   status: AppStatus;
   auditLog: AuditLogEntry[];
+  pendingStaffAction?: PendingStaffAction;
   createdAt: string;
   updatedAt: string;
 }

@@ -8,7 +8,8 @@ import {
   runTransaction,
   serverTimestamp,
   updateDoc,
-  where
+  where,
+  deleteField
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { ApplicationData, AppStatus, AuditLogEntry } from "./types";
@@ -67,6 +68,62 @@ export async function updateStatus(mobile: string, status: AppStatus, entry: Aud
   await updateDoc(ref, {
     status,
     auditLog: [...oldLog, entry],
+    updatedAt: serverTimestamp()
+  });
+}
+
+
+export async function requestStatusChange(mobile: string, requestedStatus: AppStatus, staffName: string) {
+  const ref = doc(db, APPLICATIONS, mobile);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) throw new Error("Application not found");
+  const oldLog = (snap.data().auditLog ?? []) as AuditLogEntry[];
+
+  await updateDoc(ref, {
+    status: "Under Review",
+    pendingStaffAction: {
+      requestedBy: staffName,
+      requestedStatus,
+      requestedAt: new Date().toISOString(),
+      previousStatus: (snap.data().status as AppStatus) ?? "Submitted"
+    },
+    auditLog: [
+      ...oldLog,
+      {
+        staffName,
+        action: "Edit",
+        timestamp: new Date().toISOString(),
+        notes: `Requested ${requestedStatus} by staff, pending admin approval`
+      }
+    ],
+    updatedAt: serverTimestamp()
+  });
+}
+
+export async function resolveStaffAction(mobile: string, adminName: string, approve: boolean) {
+  const ref = doc(db, APPLICATIONS, mobile);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) throw new Error("Application not found");
+
+  const data = snap.data();
+  const pending = data.pendingStaffAction as { requestedStatus: AppStatus; previousStatus: AppStatus } | undefined;
+  if (!pending) throw new Error("No pending staff action");
+
+  const oldLog = (data.auditLog ?? []) as AuditLogEntry[];
+  const nextStatus = approve ? pending.requestedStatus : pending.previousStatus;
+
+  await updateDoc(ref, {
+    status: nextStatus,
+    pendingStaffAction: deleteField(),
+    auditLog: [
+      ...oldLog,
+      {
+        staffName: adminName,
+        action: approve ? (pending.requestedStatus === "Approved" ? "Approve" : "Reject") : "Edit",
+        timestamp: new Date().toISOString(),
+        notes: approve ? `Admin approved staff request to ${pending.requestedStatus}` : "Admin rejected staff request"
+      }
+    ],
     updatedAt: serverTimestamp()
   });
 }
