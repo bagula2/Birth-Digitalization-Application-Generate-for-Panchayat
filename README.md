@@ -1,112 +1,141 @@
-# Birth-Digitalization-Application-Generate-for-Panchayat
-Birth Certificate Digitalization Application System for Bagula 2 No Gram Panchayat. Enables citizens to generate application forms, prevents duplicate entries, supports document upload, and provides staff-based verification workflow with PDF generation.
 # Birth Certificate Digitalization Application System
 
 ## 📌 Overview
-This project is a web-based application designed for **Bagula 2 No Gram Panchayat** to streamline the process of birth certificate digitalization.
+This is a web-based application developed for **Bagula 2 No Gram Panchayat** to streamline the process of birth certificate digitalization.
 
-The system enables citizens to generate application forms, prevents duplicate entries, and allows Panchayat staff to review and verify applications efficiently.
+The system enables citizens to generate structured applications, prevents duplicate entries, and allows Panchayat staff to review and verify submissions efficiently.
 
 ---
 
 ## 🎯 Objective
-- Eliminate duplicate applications
-- Reduce repeated visits to Panchayat office
-- Ensure structured and validated data entry
-- Generate printable one-page application PDF
+- Eliminate duplicate applications  
+- Reduce repeated visits to Panchayat office  
+- Ensure structured and validated data entry  
+- Generate printable one-page application PDF  
 
 ---
 
-## 🚀 Features
+## 🚀 Core Features
 
-### 👤 User
-- OTP-based login (mobile authentication)
-- Step-by-step application form
-- Duplicate entry detection
-- Document upload (≤250KB)
-- PDF application generation
-- Application status tracking
-
----
-
-### 👨‍💼 Staff Panel
-- Secure login with OTP
-- View all applications
-- Download uploaded documents
-- Approve / Reject applications
-- Audit log tracking
+### 👤 User Module
+- OTP-based login (mobile authentication)  
+- Step-by-step multi-stage form  
+- Duplicate entry detection  
+- Document upload (≤250KB)  
+- One-page PDF generation  
+- Application status tracking  
 
 ---
 
-### 🛡️ Admin Panel
-- Full system control
-- Approve staff edits
-- Manage application data
+### 👨‍💼 Staff Module
+- Secure login with OTP  
+- View all applications  
+- Download uploaded documents  
+- Approve / Reject applications  
+- Audit log tracking  
 
 ---
 
-## 🔒 Security & Validation
-- One mobile = one application (strict rule)
+### 🛡️ Admin Module
+- Full system control  
+- Approve staff edits  
+- Manage system configuration  
+
+---
+
+## 🔒 Validation & Security
+- One mobile = one application (strict enforcement)  
 - Duplicate detection using:
-  - Child Name + DOB + Mother Name
-- Aadhaar and ID validation enforced
-- No invalid or incomplete submission allowed
+  - Child Name + DOB + Mother Name  
+- Aadhaar and ID format validation  
+- Mandatory field enforcement  
+- File size and format validation  
 
 ---
 
 ## 🔕 System Behavior
-- No SMS/email notifications to users
-- Users must check status via website
-- All submissions stored securely
+- No SMS/email notifications to users  
+- Users must check status via portal  
+- Data stored securely with structured schema  
 
 ---
 
-## 📄 Document Requirements
-1. Application Form (Generated)
-2. Birth Certificate
-3. Father’s Aadhaar
-4. Mother’s Aadhaar
-5. Ration Cards
-6. Child Proof (Aadhaar/EPIC)
-7. Supporting documents (if available)
+## 📄 Required Documents
+1. Application Form (Generated)  
+2. Birth Certificate  
+3. Father’s Aadhaar  
+4. Mother’s Aadhaar  
+5. Ration Cards  
+6. Child Proof (Aadhaar/EPIC)  
+7. Supporting documents (if available)  
 
 ---
 
 ## 🧾 PDF Output
-- One-page A4 format
-- Government-style structure
-- Ready for Panchayat submission
-- No watermark
+- One-page A4 format  
+- Government-style layout  
+- Print-ready with proper margins  
+- No watermark  
 
 ---
 
 ## ⚙️ Tech Stack
-- Next.js
-- Tailwind CSS
-- Firebase (Auth, Firestore, Storage)
-- jsPDF
-- Vercel (Hosting)
+- Next.js (App Router)  
+- Tailwind CSS  
+- Firebase (Auth, Firestore, Storage)  
+- jsPDF  
+- EmailJS  
+- Vercel (Hosting)  
 
 ---
 
 ## 🧠 System Design
-- Multi-step form wizard
-- Dropdown-based controlled inputs
-- Conditional rendering
-- Auto-save functionality
+- Multi-step form wizard  
+- Dropdown-based controlled inputs  
+- Conditional rendering  
+- Auto-save functionality  
+
+---
+
+## 🛠️ Setup Instructions
+
+1. Clone the repository  
+2. Create `.env.local` using `.env.example`  
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Run development server:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📁 Project Structure (Basic)
+
+- `/app` → Next.js routes and pages  
+- `/components` → UI components  
+- `/lib` → Firebase and utility functions  
+- `/public` → Static assets  
+
+---
+
+## 🔑 Environment Configuration
+Configure the following in `.env.local`:
+
+- Firebase API Key
+- Firebase Auth Domain
+- Firestore Project ID
+- Storage Bucket
+- EmailJS Service ID
+- EmailJS Public Key
 
 ---
 
 ## ⚖️ Disclaimer
-This portal facilitates application generation only.  
+This portal facilitates application generation only.
 Final approval rests with the competent Panchayat authority.
-
----
-
-## 📌 Future Scope
-- Integration with state-level birth registry
-- Real-time verification APIs
-- Advanced analytics dashboard
 
 ---
 
@@ -117,5 +146,4 @@ Nadia, West Bengal
 ---
 
 ## 📧 Contact
-For administrative access or queries:
 nitush8343980898@gmail.com
