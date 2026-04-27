@@ -5,6 +5,7 @@ import { ConfirmationResult, RecaptchaVerifier, signInWithPhoneNumber } from "fi
 import { ref, uploadBytes } from "firebase/storage";
 import { auth, storage } from "@/lib/firebase";
 import { WB_DISTRICTS, VILLAGES } from "@/lib/constants";
+import { PANCHAYAT_HIERARCHY } from "@/lib/panchayatHierarchy";
 import { checkDuplicateEntry, checkMobileExists, getApplicationByMobile, saveApplication } from "@/lib/firestore";
 import { generateApplicationPDF } from "@/lib/pdf";
 import { clearOtpSession, loadOtpSession, saveOtpSession } from "@/lib/authSession";
@@ -93,7 +94,9 @@ export default function Page() {
     addressVillage: "",
     addressMouza: "",
     addressPostOffice: "",
-    addressBlock: "",
+    addressSubdivision: "Select Option",
+    addressBlock: "Select Option",
+    addressGramPanchayat: "Select Option",
     addressDistrict: "Select Option",
     addressPin: ""
   });
@@ -103,6 +106,16 @@ export default function Page() {
     [form.childFirstName, form.childMiddleName, form.childLastName]
   );
   const update = (key: string, value: string) => setForm((p) => ({ ...p, [key]: value }));
+
+  const subdivisionOptions = form.addressDistrict !== "Select Option"
+    ? Object.keys(PANCHAYAT_HIERARCHY[form.addressDistrict] ?? {})
+    : [];
+  const blockOptions = form.addressDistrict !== "Select Option" && form.addressSubdivision !== "Select Option"
+    ? Object.keys(PANCHAYAT_HIERARCHY[form.addressDistrict]?.[form.addressSubdivision] ?? {})
+    : [];
+  const gramPanchayatOptions = form.addressDistrict !== "Select Option" && form.addressSubdivision !== "Select Option" && form.addressBlock !== "Select Option"
+    ? PANCHAYAT_HIERARCHY[form.addressDistrict]?.[form.addressSubdivision]?.[form.addressBlock] ?? []
+    : [];
 
   useEffect(() => {
     const session = loadOtpSession();
@@ -209,7 +222,7 @@ export default function Page() {
       }
       return Boolean(form.fatherName && form.motherName && form.motherMobile && idFile);
     }
-    if (step === 6) return Boolean(form.addressStreet && form.addressVillage && form.addressMouza && form.addressPostOffice && form.addressBlock && form.addressDistrict !== "Select Option" && form.addressPin);
+    if (step === 6) return Boolean(form.addressStreet && form.addressVillage && form.addressMouza && form.addressPostOffice && form.addressDistrict !== "Select Option" && form.addressSubdivision !== "Select Option" && form.addressBlock !== "Select Option" && form.addressGramPanchayat !== "Select Option" && form.addressPin);
     return true;
   };
 
@@ -245,7 +258,7 @@ export default function Page() {
       motherName: form.motherName,
       motherMobile: form.motherMobile,
       addressStreet: form.addressStreet,
-      addressVillage: form.addressVillage,
+      addressVillage: form.addressGramPanchayat === "Select Option" ? form.addressVillage : form.addressGramPanchayat,
       addressMouza: form.addressMouza,
       addressPostOffice: form.addressPostOffice,
       addressBlock: form.addressBlock,
@@ -287,7 +300,7 @@ export default function Page() {
       motherMobile: form.motherMobile,
       motherEmail: form.motherEmail || undefined,
       addressStreet: form.addressStreet,
-      addressVillage: form.addressVillage,
+      addressVillage: form.addressGramPanchayat === "Select Option" ? form.addressVillage : form.addressGramPanchayat,
       addressMouza: form.addressMouza,
       addressPostOffice: form.addressPostOffice,
       addressBlock: form.addressBlock,
@@ -399,8 +412,22 @@ export default function Page() {
             <input className={inputClass} placeholder="Village" value={form.addressVillage} onChange={(e) => update("addressVillage", e.target.value)} />
             <input className={inputClass} placeholder="Mouza" value={form.addressMouza} onChange={(e) => update("addressMouza", e.target.value)} />
             <input className={inputClass} placeholder="Post Office" value={form.addressPostOffice} onChange={(e) => update("addressPostOffice", e.target.value)} />
-            <input className={inputClass} placeholder="Block" value={form.addressBlock} onChange={(e) => update("addressBlock", e.target.value)} />
-            <select className={selectClass} value={form.addressDistrict} onChange={(e) => update("addressDistrict", e.target.value)}><option>Select Option</option>{WB_DISTRICTS.map((d) => <option key={d}>{d}</option>)}</select>
+            <select className={selectClass} value={form.addressDistrict} onChange={(e) => {
+              update("addressDistrict", e.target.value);
+              update("addressSubdivision", "Select Option");
+              update("addressBlock", "Select Option");
+              update("addressGramPanchayat", "Select Option");
+            }}><option>Select Option</option>{WB_DISTRICTS.map((d) => <option key={d}>{d}</option>)}</select>
+            <select className={selectClass} value={form.addressSubdivision} onChange={(e) => {
+              update("addressSubdivision", e.target.value);
+              update("addressBlock", "Select Option");
+              update("addressGramPanchayat", "Select Option");
+            }}><option>Select Option</option>{subdivisionOptions.map((d) => <option key={d}>{d}</option>)}</select>
+            <select className={selectClass} value={form.addressBlock} onChange={(e) => {
+              update("addressBlock", e.target.value);
+              update("addressGramPanchayat", "Select Option");
+            }}><option>Select Option</option>{blockOptions.map((d) => <option key={d}>{d}</option>)}</select>
+            <select className={selectClass} value={form.addressGramPanchayat} onChange={(e) => update("addressGramPanchayat", e.target.value)}><option>Select Option</option>{gramPanchayatOptions.map((d) => <option key={d}>{d}</option>)}</select>
             <input className={inputClass} placeholder="PIN" value={form.addressPin} onChange={(e) => update("addressPin", e.target.value.replace(/\D/g, ""))} maxLength={6} />
             <input className={inputClass} value="West Bengal" readOnly />
           </>
